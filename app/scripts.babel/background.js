@@ -8,7 +8,16 @@ chrome.browserAction.onClicked.addListener(tab => {
   xmlHttp.onreadystatechange = function() {
     if ( xmlHttp.readyState == 4 && xmlHttp.status == 200) {
       var text = MarkdownBuilder.build(xmlHttp.responseText);
-      alert(text);
+
+      var textArea = document.createElement('textarea');
+      textArea.style.cssText = 'position:absolute;left:-100%';
+      document.body.appendChild(textArea);
+      textArea.value = text;
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      alert("クリップボードにコピーされました！！！");
     }
   }
 
@@ -18,72 +27,66 @@ chrome.browserAction.onClicked.addListener(tab => {
 
 class MarkdownBuilder {
   static build(jsonData) {
-    var data = JSON.parse(jsonData);
+    var board = BoardBuilder.build(jsonData);
 
-    var todoList = data.lists.find(list => list.name == 'Todo');
-    var doingList = data.lists.find(list => list.name == 'Doing');
-    var doneList = data.lists.find(list => list.name == 'Done');
+    var markdownText = '## ' + board.name + '\n';
+    ['Todo', 'Doing', 'Done'].forEach(listName => {
+      markdownText += '\n### ' + listName + '\n\n';
+      board.lists
+           .find(list => list.name == listName)
+           .cards
+           .filter(card => !card.closed)
+           .forEach(card => markdownText += '- ' + card.name + '\n');
+    });
 
-    var todoCards = data.cards.filter(card => card.idList == todoList.id && card.closed == false);
-    var doingCards = data.cards.filter(card => card.idList == doingList.id && card.closed == false);
-    var doneCards = data.cards.filter(card => card.idList == doneList.id && card.closed == false);
-
-    var markdownText = '';
-    markdownText += '\n### Todo\n\n';
-    todoCards.forEach(card => markdownText += '- ' + card.name + '\n');
-    markdownText += '\n### Doing\n\n';
-    doingCards.forEach(card => markdownText += '- ' + card.name + '\n');
-    markdownText += '\n### Done\n\n';
-    doneCards.forEach(card => markdownText += '- ' + card.name + '\n');
     return markdownText;
   }
 }
 
-// 今後は以下のクラスを使う
-// class BoardBuilder {
-//   static build(jsonData) {
-//   }
-// }
-//
-// class Board {
-//   constructor(name, lists) {
-//     this.name = name;
-//     this.lists = lists;
-//   }
-// }
-//
-// class Card {
-//   constructor(name, checkLists, attachments) {
-//     this.name = name;
-//     this.checkLists = checkLists;
-//     this.attachments = attachments;
-//   }
-// }
-//
-// class CheckItem {
-//   constructor(name, isCheck) {
-//     this.name = name;
-//     this.isCheck = isCheck;
-//   }
-// }
-//
-// class Attachment {
-//   constructor(name, url) {
-//     this.name = name;
-//     this.url = url;
-//   }
-// }
-//
-// class CheckList {
-//   constructor(name, checkItems) {
-//     this.name = name;
-//     this.checkItems = checkItems;
-//   }
-// }
-//
-// class List {
-//   constructor(name, cards) {
-//     this.name = name;
-//     this.cards = cards;
-//   }
-// }
+class BoardBuilder {
+  static build(jsonData) {
+    var data = JSON.parse(jsonData);
+
+    var lists = data.lists.map(list => {
+      var filter_cards = data.cards.filter(card => card.idList == list.id);
+      var cards = filter_cards.map(card => {
+        var attachments = card.attachments.map(attachment => {
+          return new Attachment(attachment.name, attachment.url);
+        });
+        return new Card(card.name, attachments, card.closed);
+      });
+      return new List(list.name, cards);
+    });
+
+    return new Board(data.name, lists);
+  }
+}
+
+class Board {
+  constructor(name, lists) {
+    this.name = name;
+    this.lists = lists;
+  }
+}
+
+class Card {
+  constructor(name, attachments, closed) {
+    this.name = name;
+    this.attachments = attachments;
+    this.closed = closed;
+  }
+}
+
+class Attachment {
+  constructor(name, url) {
+    this.name = name;
+    this.url = url;
+  }
+}
+
+class List {
+  constructor(name, cards) {
+    this.name = name;
+    this.cards = cards;
+  }
+}
