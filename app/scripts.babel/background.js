@@ -17,7 +17,7 @@ chrome.browserAction.onClicked.addListener(tab => {
       document.execCommand('copy');
       document.body.removeChild(textArea);
 
-      alert("クリップボードにコピーされました！！！");
+      alert('クリップボードにコピーされました！！！');
     }
   }
 
