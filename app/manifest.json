@@ -14,7 +14,7 @@
     ]
   },
   "permissions": [
-    "tabs", "https://*/*", "clipboardRead"
+    "tabs", "https://*/*", "clipboardRead", "notifications"
   ],
   "browser_action": {
     "default_title": "Print this page",

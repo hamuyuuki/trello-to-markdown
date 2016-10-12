@@ -17,7 +17,9 @@ chrome.browserAction.onClicked.addListener(tab => {
       document.execCommand('copy');
       document.body.removeChild(textArea);
 
-      alert('クリップボードにコピーされました！！！');
+      new Notification(chrome.i18n.getMessage('appName'), {
+        body: chrome.i18n.getMessage('succeeded'), icon: '../images/icon-128.png'
+      });
     }
   }
 
