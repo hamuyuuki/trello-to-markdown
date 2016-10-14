@@ -14,7 +14,7 @@
     ]
   },
   "permissions": [
-    "tabs", "https://*/*", "clipboardRead", "notifications"
+    "tabs", "https://trello.com/*", "clipboardRead", "notifications"
   ],
   "browser_action": {
     "default_title": "Print this page",
