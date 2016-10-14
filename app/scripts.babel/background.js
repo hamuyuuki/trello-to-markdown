@@ -1,15 +1,15 @@
 'use strict';
 
 chrome.browserAction.onClicked.addListener(tab => {
-  var jsonUrl = /(https:\/\/trello.com\/b\/.*)\/.*/.exec(tab.url)[1] + '.json';
+  let jsonUrl = /(https:\/\/trello.com\/b\/.*)\/.*/.exec(tab.url)[1] + '.json';
 
-  var xmlHttp = new XMLHttpRequest();
+  let xmlHttp = new XMLHttpRequest();
 
   xmlHttp.onreadystatechange = function() {
     if ( xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-      var text = MarkdownBuilder.build(xmlHttp.responseText);
+      let text = MarkdownBuilder.build(xmlHttp.responseText);
 
-      var textArea = document.createElement('textarea');
+      let textArea = document.createElement('textarea');
       textArea.style.cssText = 'position:absolute;left:-100%';
       document.body.appendChild(textArea);
       textArea.value = text;
@@ -29,14 +29,14 @@ chrome.browserAction.onClicked.addListener(tab => {
 
 class MarkdownBuilder {
   static build(jsonData) {
-    var board = BoardBuilder.build(jsonData);
+    let board = BoardBuilder.build(jsonData);
 
-    var markdownText = '## ' + board.name + '\n';
-    ['Todo', 'Doing', 'Done'].forEach(listName => {
+    let markdownText = '## ' + board.name + '\n';
+    ['ToDo', 'Todo', 'Doing', 'Done'].forEach(listName => {
+      let lists = board.lists.find(list => list.name == listName)
+      if (lists == undefined) return;
       markdownText += '\n### ' + listName + '\n\n';
-      board.lists
-           .find(list => list.name == listName)
-           .cards
+      lists.cards
            .filter(card => !card.closed)
            .forEach(card => markdownText += '- ' + card.name + '\n');
     });
@@ -47,12 +47,12 @@ class MarkdownBuilder {
 
 class BoardBuilder {
   static build(jsonData) {
-    var data = JSON.parse(jsonData);
+    let data = JSON.parse(jsonData);
 
-    var lists = data.lists.map(list => {
-      var filter_cards = data.cards.filter(card => card.idList == list.id);
-      var cards = filter_cards.map(card => {
-        var attachments = card.attachments.map(attachment => {
+    let lists = data.lists.map(list => {
+      let filter_cards = data.cards.filter(card => card.idList == list.id);
+      let cards = filter_cards.map(card => {
+        let attachments = card.attachments.map(attachment => {
           return new Attachment(attachment.name, attachment.url);
         });
         return new Card(card.name, attachments, card.closed);
