@@ -8,11 +8,9 @@
     "description": "Convert trello board to markdown"
   },
   "succeeded": {
-    "message" : "Copied to clipboard!",
-    "description" : ""
+    "message" : "クリップボードにコピーしました"
   },
   "failed": {
-    "message" : "Error",
-    "description" : ""
+    "message" : "エラーが発生しました"
   }
 }
