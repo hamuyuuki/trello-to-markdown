@@ -1,8 +1,7 @@
 {
-  "name": "yes",
+  "name": "trello-to-markdown",
   "private": true,
-  "version": "0.0.0",
-  "description": "yes",
+  "description": "",
   "scripts": {
     "start": "npm run dev:chrome",
     "build": "npm run build:chrome",
