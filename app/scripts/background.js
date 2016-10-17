@@ -1,5 +1,7 @@
 'use strict';
 
+import Board from './board';
+
 chrome.browserAction.onClicked.addListener(tab => {
   let jsonUrl = /(https:\/\/trello.com\/b\/.*)\/.*/.exec(tab.url)[1] + '.json';
 
@@ -61,13 +63,6 @@ class BoardBuilder {
     });
 
     return new Board(data.name, lists);
-  }
-}
-
-class Board {
-  constructor(name, lists) {
-    this.name = name;
-    this.lists = lists;
   }
 }
 
