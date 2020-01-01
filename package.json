@@ -24,7 +24,7 @@
     "chromereload": "0.x.x",
     "debounce": "1.x.x",
     "del": "2.x.x",
-    "eslint": "3.x.x",
+    "eslint": "4.x.x",
     "eslint-loader": "1.x.x",
     "gulp": "3.x.x",
     "gulp-bump": "2.x.x",
